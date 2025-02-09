@@ -1,14 +1,40 @@
-import { getMatches  } from './scraper';
+import {
+  getMatches,
+  getPremierLeagueFixtures,
+  getPremierLeagueMatchResults,
+  getPremierLeagueRankings,
+} from './scraper';
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+const returnResponse = (name, respData) => {
+  try {
+    return new Response(JSON.stringify(respData), {
+      headers: {
+        'Content-Type': 'application/json',
+        ...corsHeaders
+      }
+    });
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ error: `Failed to fetch ${name}` }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          ...corsHeaders
+        }
+      }
+    );
+  }
+}
 
 const server = Bun.serve({
   port: 3000,
   async fetch(req) {
-    
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    };
     const url = new URL(req.url);
     const headers = {
       'Content-Type': 'application/json',
@@ -28,34 +54,23 @@ const server = Bun.serve({
     }
 
     if (url.pathname === '/matches') {
-      try {
-        const matches = await getMatches();
-        
-        // // Handle query parameters for filtering
-        // const competition = url.searchParams.get('competition');
-        // const filteredMatches = competition
-        //   ? matches.filter(match => 
-        //       match.competition.toLowerCase().includes(competition.toLowerCase())
-        //     )
-        //   : matches;
+      const matches = await getMatches();
+      return returnResponse('matches', matches);
+    }
 
-        return new Response(JSON.stringify(matches), {
-          headers: {
-            'Content-Type': 'application/json',
-            ...corsHeaders
-          }
-        });
-      } catch (error) {
-        return new Response(
-          JSON.stringify({ error: 'Failed to fetch matches' }), {
-            status: 500,
-            headers: {
-              'Content-Type': 'application/json',
-              ...corsHeaders
-            }
-          }
-        );
-      }
+    if (url.pathname === '/premier-league/fixtures') {
+      const fixtures = await getPremierLeagueFixtures();
+      return returnResponse('fixtures', fixtures);
+    }
+
+    if (url.pathname === '/premier-league/match-results') {
+      const results = await getPremierLeagueMatchResults();
+      return returnResponse('results', results);
+    }
+
+    if (url.pathname === '/premier-league/rankings') {
+      const results = await getPremierLeagueRankings();
+      return returnResponse('rankings', results);
     }
 
     return new Response(JSON.stringify({ error: 'Not Found' }), {
