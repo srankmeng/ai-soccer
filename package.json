@@ -1,0 +1,14 @@
+{
+  "name": "soccer-api",
+  "module": "index.js",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "playwright": "^1.50.1"
+  }
+}
