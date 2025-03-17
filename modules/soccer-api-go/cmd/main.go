@@ -29,6 +29,46 @@ func main() {
     return c.JSON(matches)
   })
 
+  app.Get("/premier-league/fixtures", func(c *fiber.Ctx) error {
+    fixtures, err := scraper.ScrapePremierLeagueFixtures()
+    if err != nil {
+      return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+        "error": "Error scraping fixtures: " + err.Error(),
+      })
+    }
+
+    return c.JSON(fixtures)
+  })
+
+  app.Get("/premier-league/match-results", func(c *fiber.Ctx) error {
+    results, err := scraper.ScrapePremierLeagueMatchResults()
+    if err != nil {
+      return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+        "error": "Error scraping match results: " + err.Error(),
+      })
+    }
+
+    return c.JSON(results)
+  })
+
+  app.Get("/premier-league/rankings", func(c *fiber.Ctx) error {
+    results, err := scraper.ScrapePremierLeagueRankings()
+    if err != nil {
+      return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+        "error": "Error scraping rankings: " + err.Error(),
+      })
+    }
+
+    return c.JSON(results)
+  })
+
+  // 404 Not Found Handling
+  app.Use(func(c *fiber.Ctx) error {
+    return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+      "error": "Not Found",
+    })
+  })
+
   if err := app.Listen(":" + strconv.Itoa(port)); err != nil {
     panic(err)
   }
