@@ -9,3 +9,5 @@ install:
 
 i: install
 
+install_chromium:
+	bunx playwright install chromium

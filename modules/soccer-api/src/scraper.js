@@ -56,10 +56,10 @@ const scrapePremierLeagueFixtures = async (browserContext) => {
   try {
     await page.goto('https://www.livescore.com/en/football/england/premier-league/fixtures/');
     await page.waitForSelector('[data-test-id="virtuoso-item-list"]');
-    const fixturesEls = await page.locator('[data-test-id="virtuoso-item-list"] > div').elementHandles();
+    const fixturesEls = await page.locator('[data-test-id="virtuoso-item-list"] [data-test-id="virtuoso-item-list"] > div').elementHandles();
   
     for (const fixtureEl of fixturesEls) {
-      const date = await fixtureEl.$eval('.Sv.Tv', (el) => el.textContent?.trim() || '');
+      const date = await fixtureEl.$eval('[id*="_match-row"] > a > div > span > span', (el) => el.textContent?.trim() || '');
       const time = await fixtureEl.$eval('[data-testid*="_status-or-time"]', (el) => el.textContent?.trim() || '');
       const homeTeamName = await fixtureEl.$eval('[id*="_home-team-name"]', (el) => el.textContent?.trim() || '');
       const awayTeamName = await fixtureEl.$eval('[id*="_away-team-name"]', (el) => el.textContent?.trim() || '');
@@ -91,7 +91,7 @@ const scrapePremierLeagueMatchResults = async (browserContext) => {
     const fixturesEls = await page.locator('[data-test-id="virtuoso-item-list"] [data-test-id="virtuoso-item-list"] > div').elementHandles();
   
     for (const fixtureEl of fixturesEls) {
-      const date = await fixtureEl.$eval('.Sv.Tv', (el) => el.textContent?.trim() || '');
+      const date = await fixtureEl.$eval('[id*="_match-row"] > a > div > span > span', (el) => el.textContent?.trim() || '');
       const time = await fixtureEl.$eval('[data-testid*="_status-or-time"]', (el) => el.textContent?.trim() || '');
       const homeTeamName = await fixtureEl.$eval('[id*="_home-team-name"]', (el) => el.textContent?.trim() || '');
       const homeTeamScore = await fixtureEl.$eval('[id*="_home-team-score"]', (el) => el.textContent?.trim() || '');
@@ -123,8 +123,8 @@ const scrapePremierLeagueRankings = async (browserContext) => {
 
   try {
     await page.goto('https://www.livescore.com/en/football/england/premier-league/table/');
-    await page.waitForSelector('#league-table');
-    const rankingsEls = await page.locator('#league-table table tbody tr').elementHandles();
+    await page.waitForSelector('[data-testid*="table-all"]');
+    const rankingsEls = await page.locator('[data-testid*="table-all"] tbody tr').elementHandles();
   
     for (const rankingEl of rankingsEls) {
       const rank = await rankingEl.$eval('td:nth-child(1)', (el) => el.textContent?.replace(/[^\d]/g, '') || '');
