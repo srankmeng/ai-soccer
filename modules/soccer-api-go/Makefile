@@ -2,17 +2,10 @@
 
 init:
 	go mod init soccer-api
+
+tidy:
+	go mod tidy
+
 run:
 	go run cmd/main.go
-
-# install:
-# 	bun install
-
-# i: install
-
-# install_chromium:
-# 	bunx playwright install chromium
-
-
-
 
